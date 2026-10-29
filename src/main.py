@@ -26,7 +26,7 @@ from models.candidate import Candidate
 from utils.memory_guard import set_memory_limit, check_and_gc, get_status
 
 
-class NDSV5Pipeline:
+class NDSV6Pipeline:
     def __init__(self):
         self.logger = setup_logger()
         self.config = load_config()
@@ -88,14 +88,12 @@ class NDSV5Pipeline:
 
     def _print_banner(self):
         self.logger.info("=" * 100)
-        self.logger.info("███╗   ██╗██████╗ ███████╗    ██╗   ██╗███████╗")
-        self.logger.info("████╗  ██║██╔══██╗██╔════╝    ██║   ██║██╔════╝")
-        self.logger.info("██╔██╗ ██║██║  ██║███████╗    ██║   ██║███████╗")
-        self.logger.info("██║╚██╗██║██║  ██║╚════██║    ╚██╗ ██╔╝╚════██║")
-        self.logger.info("██║ ╚████║██████╔╝███████║     ╚████╔╝ ███████║")
-        self.logger.info("╚═╝  ╚═══╝╚═════╝ ╚══════╝      ╚═══╝  ╚══════╝")
-        self.logger.info("=" * 100)
-        self.logger.info("NDS V5 - 敏感信息识别系统")
+        self.logger.info(r"#   #  ####   ####       #   #   #### ")
+        self.logger.info(r"##  #  #   #  #          #   #  #     ")
+        self.logger.info(r"# # #  #   #  ####       #   #  ##### ")
+        self.logger.info(r"#  ##  #   #      #       # #   #   # ")
+        self.logger.info(r"#   #  ####   ####         #     #### ")
+        self.logger.info("NDS V6 - 敏感信息识别系统")
         self.logger.info(f"启动时间: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         self.logger.info("=" * 100)
 
@@ -216,7 +214,7 @@ class NDSV5Pipeline:
 
     def _print_final_report(self, results: List[Candidate], output_path: Path):
         self.logger.info("=" * 100)
-        self.logger.info("NDS V5 运行报告")
+        self.logger.info("NDS V6 运行报告")
         self.logger.info("=" * 100)
         
         self.logger.info("性能统计:")
@@ -268,7 +266,7 @@ class NDSV5Pipeline:
         
         self.logger.info(f"输出文件: {output_path}")
         self.logger.info("=" * 100)
-        self.logger.info("NDS V5 运行结束")
+        self.logger.info("NDS V6 运行结束")
         self.logger.info("=" * 100)
 
 
@@ -296,7 +294,7 @@ class DebugPipeline:
 
     def run(self):
         self.logger.info("=" * 80)
-        self.logger.info("[DEBUG MODE] NDS V5 敏感信息诊断扫描")
+        self.logger.info("[DEBUG MODE] NDS V6 敏感信息诊断扫描")
         self.logger.info(f"目标数据库: {', '.join(self.target_dbs) if self.target_dbs else '全部'}")
         self.logger.info(f"目标数据表: {self.target_table or '全部'}")
         self.logger.info("=" * 80)
@@ -653,7 +651,7 @@ class DebugPipeline:
 
 
 def main():
-    parser = argparse.ArgumentParser(description='NDS V5 敏感信息识别系统')
+    parser = argparse.ArgumentParser(description='NDS V6 敏感信息识别系统')
     parser.add_argument('--debug', action='store_true', help='启用调试模式')
     parser.add_argument('--db', type=str, nargs='+', default=None, help='指定目标数据库名称 (可指定多个，空格分隔)')
     parser.add_argument('--table', type=str, default=None, help='指定目标数据表名称 (需要配合 --db)')
@@ -692,7 +690,7 @@ def main():
         # 生产模式忽略快速扫描参数
         if args.fast or args.workers != 4:
             print("警告: --fast 和 --workers 参数仅在调试模式下有效，生产模式已忽略")
-        pipeline = NDSV5Pipeline()
+        pipeline = NDSV6Pipeline()
         success = pipeline.run()
 
     sys.exit(0 if success else 1)

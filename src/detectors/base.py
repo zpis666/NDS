@@ -26,6 +26,8 @@ class BaseDetector(ABC):
         extracted_value: str,
         confidence: float = 1.0
     ) -> Candidate:
+        if self.data_form == 'binary_blob' and sensitive_type == 'CHINESE_NAME' and confidence < 0.88:
+            return None
         return Candidate(
             db_type=db_type,
             db_name=db_name,

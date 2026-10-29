@@ -16,7 +16,10 @@ class UnstructuredDetector(BaseDetector):
                 '患者', '病人', '姓名', '名字', '委托人', '受益人',
                 '客户', '员工', '法人', '代表', '被告', '原告',
                 '监护人', '代理人', '收款人', '汇款人', '持卡人',
-                '就诊人', '体检人', '被保险人', '车主', '驾驶员'
+                '就诊人', '体检人', '被保险人', '车主', '驾驶员',
+                '被征地人', '报告人', '丢失人', '来信人', '当事人',
+                '报案人', '违规当事人', '负责人', '孕妇', '用户',
+                '被回访人', '来电', '协助'
             ],
             'PHONE_NUMBER': [
                 '电话', '手机', '联系方式', '联系电话', '手机号',
@@ -94,6 +97,13 @@ class UnstructuredDetector(BaseDetector):
                     re.compile(rf'{re.escape(keyword)}[：:]\s*([^\s,;，；。、]+)'),
                     re.compile(rf'{re.escape(keyword)}\s*[为是]\s*([^\s,;，；。、]+)'),
                 ]
+                if sensitive_type == 'CHINESE_NAME':
+                    patterns.extend([
+                        re.compile(rf'{re.escape(keyword)}\s*([\u4e00-\u9fa5]{{2,4}})(?=[（(，,；;。\s])'),
+                        re.compile(rf'{re.escape(keyword)}([\u4e00-\u9fa5]{{2,4}})(?=[（(，,；;。\s])'),
+                        re.compile(rf'{re.escape(keyword)}\s*([\u4e00-\u9fa5]{{2,4}})(?=先生|女士|反映|询问|咨询|申诉|举报|报告|称|，|,|。|（|\(|\s)'),
+                        re.compile(rf'{re.escape(keyword)}([\u4e00-\u9fa5]{{2,4}})(?=先生|女士|反映|询问|咨询|申诉|举报|报告|称|，|,|。|（|\(|\s)'),
+                    ])
 
                 for pattern in patterns:
                     matches = pattern.findall(text)

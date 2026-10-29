@@ -8,6 +8,8 @@ SENSITIVE_PATTERNS = {
         re.compile(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
     ],
     'ADDRESS': [
+        # 宽松完整地址：覆盖“经济技术开发区/管理委员会”等较长行政片段
+        re.compile(r'(?:北京|上海|天津|重庆|河北|山西|辽宁|吉林|黑龙江|江苏|浙江|安徽|福建|江西|山东|河南|湖北|湖南|广东|海南|四川|贵州|云南|陕西|甘肃|青海|台湾|内蒙古|广西|西藏|宁夏|新疆)[\u4e00-\u9fa5]{2,60}\d{2,4}号\d{2,4}室'),
         # 完整地址：省/自治区 + 市 + 区/县 + 街道/路 + 号/室
         re.compile(r'[一-龥]{2,6}(?:省|自治区|市)[一-龥]{2,8}(?:市|区|县|镇|乡)[一-龥\d]{2,20}(?:路|街|道|巷|弄|号|室|栋|幢|楼|单元|小区|花园|大厦|广场|公寓|村|组|院|苑|城|府|庭|阁|坊|里|园|庄)[一-龥\d]{0,15}'),
         # 市级地址：市 + 区/县 + 街道/路 + 号/室
@@ -92,6 +94,7 @@ CHINESE_SURNAMES_SINGLE = set(
     '瞿阎充慕连茹习宦艾鱼容向古易慎戈廖庾终暨居衡步都耿满弘匡国文寇广禄'
     '阙东殴殳沃利蔚越夔隆师巩厍聂晁勾敖融冷訾辛阚那简饶空曾毋沙乜养鞠须'
     '丰巢关蒯相查后荆红游竺权逯盖益昂仝花公佘操禹'
+    '崎信湛漕谈'
 )
 
 CHINESE_SURNAMES_COMPOUND = {
@@ -104,7 +107,8 @@ CHINESE_SURNAMES_COMPOUND = {
     '微生', '梁丘', '左丘', '东门', '西门', '第五', '公甲', '公山', '公伯',
     '公坚', '公沙', '公皙', '公祖', '公输', '公仪', '公玉', '公仲', '公上',
     '公丘', '公晰', '公胜', '公索', '公慎', '公荆', '公襄',
-}
+ '即墨', '伶舟', '共叔', '窦公', '同蹄',
+ }
 
 CHINESE_NAME_COMMON_WORDS = {
     '管理', '安全', '系统', '测试', '数据', '信息', '公司', '部门', '项目',
@@ -159,7 +163,7 @@ CHINESE_NAME_COMMON_WORDS = {
 }
 
 SENSITIVE_KEYWORDS = {
-    'CHINESE_NAME': ['姓名', '名字', 'name', 'real_name', 'patient_name', 'holder_name', 'consignee', 'owner_name', 'full_name', 'contact_name', 'person_name', 'delegate_name', 'rep_name', '法人', '代表', '联系人', 'operator', 'creator', 'author', 'sender', 'payer', 'payee', 'applicant', 'signer', 'party_a', 'party_b', 'doctor_name', 'nurse_name', 'handler', 'created_by', 'officer', 'judge', 'prosecutor', 'clerk', 'plaintiff', 'defendant', 'presiding_judge'],
+    'CHINESE_NAME': ['姓名', '名字', 'name', 'real_name', 'patient_name', 'holder', 'holder_name', 'consignee', 'owner_name', 'full_name', 'contact_name', 'person_name', 'delegate_name', 'rep_name', '法人', '代表', '联系人', 'operator', 'creator', 'author', 'sender', 'payer', 'payee', 'applicant', 'signer', 'party_a', 'party_b', 'doctor_name', 'nurse_name', 'handler', 'created_by', 'officer', 'judge', 'prosecutor', 'clerk', 'plaintiff', 'defendant', 'presiding_judge'],
     'PHONE_NUMBER': ['手机', '电话', 'phone', 'mobile', 'tel', 'contact_phone', '联系电话', 'cellphone', 'telephone', '移动电话'],
     'EMAIL': ['邮箱', '邮件', 'email', 'mail', 'e_mail', '电子邮箱'],
     'ADDRESS': ['地址', '住址', 'address', 'addr', 'domicile', 'home_address', 'full_address', 'shipping_address', '居住地', '通讯地址', '户籍'],

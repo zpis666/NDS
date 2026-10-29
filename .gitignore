@@ -6,8 +6,8 @@ __pycache__/
 *.so
 *.egg
 *.egg-info/
-dist/
 build/
+dist/
 *.whl
 
 # Virtual Environment
@@ -32,16 +32,12 @@ ENV/
 Thumbs.db
 desktop.ini
 
-# Project specific
-提交/
-参考/
-src/output/*.csv
-src/output/*.log
-output/*.csv
-output/*.log
+# Runtime output / logs
+output/
+src/output/
 *.log
 
-# Sensitive config files (if user creates local override)
+# Local-only config overrides
 config.local.yaml
 *.local.yaml
 .env
@@ -62,7 +58,3 @@ htmlcov/
 
 # Jupyter
 .ipynb_checkpoints
-
-# Distribution / packaging
-*.manifest
-*.spec

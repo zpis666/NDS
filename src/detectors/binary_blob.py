@@ -110,6 +110,7 @@ class BinaryBlobDetector(BaseDetector):
         text = self._enhance_text(text)
 
         matches = self.matcher.match_with_hints(text, field_name)
+        matches.extend(self._blob_specific_matches(text))
 
         for sensitive_type, extracted_value, confidence in matches:
             candidate = self._create_candidate(
@@ -141,6 +142,68 @@ class BinaryBlobDetector(BaseDetector):
                 candidates.append(candidate)
 
         return candidates
+
+    def _blob_specific_matches(self, text: str):
+        """Extra OCR-tolerant extraction for BLOB documents.
+
+        RapidOCR often inserts spaces inside long IDs or attaches a trailing
+        noise digit to an otherwise exact value. These relaxed patterns are
+        scoped to binary_blob only so structured precision is not affected.
+        """
+        matches = []
+        if not text:
+            return matches
+
+        # OCR can split ID card numbers (e.g. "5001 16195511182414") or add
+        # one trailing digit. Try every 18-digit/X window and let checksum
+        # validation decide.
+        from matchers.patterns import validate_sensitive_value, is_chinese_name
+        for m in re.finditer(r'(?<!\d)(?:\d[\s:：\.-]*){17}[\dXx](?:[\s:：\.-]*\d)?', text):
+            digits = re.sub(r'\D', '', m.group())
+            for value in {digits[:18], digits[-18:]}:
+                if len(value) == 18 and validate_sensitive_value('ID_CARD', value):
+                    matches.append(('ID_CARD', value, 0.92))
+
+        # Same idea for MR numbers: OCR may read "MR" as "IMR" or Z/2.
+        for m in re.finditer(r'I?MR[\s:：\.-]*[0-9OZIl\s:：\.-]{7,12}', text, re.IGNORECASE):
+            value = re.sub(r'[^0-9OZIl]', '', m.group().upper())
+            value = value.replace('O', '0').replace('Z', '2').replace('I', '1').replace('L', '1')
+            value = 'MR' + value[-9:] if len(value) >= 7 else 'MR' + value
+            if validate_sensitive_value('MEDICAL_RECORD_NO', value):
+                matches.append(('MEDICAL_RECORD_NO', value, 0.90))
+
+        # Chinese names in OCR documents are often adjacent to labels without
+        # punctuation. Extract only from strong label contexts to avoid broad
+        # false positives.
+        name_contexts = [
+            r'(?:患者姓名|姓名|甲方|委托方|申请人|用户资料填写表|个人信息登记表)[：:\s（）\(\)《》、!！·”]*(?P<name>[\u4e00-\u9fa5·]{2,4})',
+            r'(?:姓\s*[名!！：:]*)\s*(?P<name>[\u4e00-\u9fa5·]{2,4})',
+            r'(?P<name>[\u4e00-\u9fa5·]{2,4})\s*(?:联系电话|身份证号|身份证|手机|性别|年龄|银行卡号)',
+            r'(?:地址|身份证号)\s*(?P<name>[\u4e00-\u9fa5·]{2,4})\s*(?:银行卡号|手机|联系电话)',
+        ]
+        for pat in name_contexts:
+            for m in re.finditer(pat, text):
+                name = m.group('name')
+                # Strip common OCR/label prefixes that may be swallowed.
+                for prefix in ('姓名', '患者', '甲方', '审方', '用方', '用户', '患名', '姓'):
+                    if name.startswith(prefix) and len(name) > len(prefix) + 1:
+                        name = name[len(prefix):]
+                if is_chinese_name(name):
+                    matches.append(('CHINESE_NAME', name, 0.88))
+
+        # Bank cards can be split by spaces or have a duplicated leading noise
+        # digit. Use Luhn validation to protect precision.
+        for m in re.finditer(r'(?<!\d)(?:\d[\s:：\.-]*){16,20}(?!\d)', text):
+            digits = re.sub(r'\D', '', m.group())
+            candidates = {digits}
+            for n in range(16, 20):
+                if len(digits) >= n:
+                    candidates.add(digits[:n]); candidates.add(digits[-n:])
+            for value in candidates:
+                if validate_sensitive_value('BANK_CARD', value):
+                    matches.append(('BANK_CARD', value, 0.88))
+
+        return matches
 
     def _ocr_extract(self, image_bytes: bytes) -> str:
         engine = self._get_ocr_engine()

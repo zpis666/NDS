@@ -1,0 +1,64 @@
+# NDS V6 数据库连接配置
+databases:
+  mysql:
+    host: "127.0.0.1"
+    port: 3306
+    user: "root"
+    password: "rootpass123"
+    databases:
+      - "ecommerce_db"
+      - "fintech_db"
+
+  postgresql:
+    host: "127.0.0.1"
+    port: 5432
+    user: "postgres"
+    password: "rootpass123"
+    databases:
+      - "healthcare_db"
+      - "govservice_db"
+
+# 运行参数
+runtime:
+  timeout_minutes: 30
+  batch_size: 1000
+  max_workers: 4
+  log_level: "INFO"
+
+# OCR配置
+ocr:
+  engine: "rapidocr"
+  confidence_threshold: 0.0
+  enable_preprocess: true
+  enable_enhance: true
+
+# 输出配置
+output:
+  csv_path: "output/upload.csv"
+  encoding: "utf-8"
+
+# 敏感类型级别映射
+sensitive_levels:
+  L2:
+    - "GPS_COORDINATE"
+    - "IP_ADDRESS"
+    - "MAC_ADDRESS"
+  L3:
+    - "CHINESE_NAME"
+    - "PHONE_NUMBER"
+    - "EMAIL"
+    - "ADDRESS"
+    - "LICENSE_PLATE"
+    - "SOCIAL_SECURITY_NO"
+    - "HOUSING_FUND_NO"
+    - "MEDICAL_INSURANCE_NO"
+    - "VIN_CODE"
+    - "MEDICAL_RECORD_NO"
+    - "USCC"
+    - "BUSINESS_LICENSE_NO"
+  L4:
+    - "ID_CARD"
+    - "BANK_CARD"
+    - "PASSPORT"
+    - "MILITARY_ID"
+    - "PASSWORD_OR_SECRET"

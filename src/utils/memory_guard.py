@@ -3,7 +3,7 @@ import os
 import logging
 import psutil
 
-logger = logging.getLogger('nds_v5.memory')
+logger = logging.getLogger('nds_v6.memory')
 
 _memory_limit_gb = 14.0
 

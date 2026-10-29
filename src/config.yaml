@@ -1,22 +1,22 @@
-# NDS V5 数据库连接配置
+# NDS V6 数据库连接配置
 databases:
   mysql:
-    host: "YOUR_HOST"
+    host: "127.0.0.1"
     port: 3306
-    user: "YOUR_USER"
-    password: "YOUR_PASSWORD"
+    user: "root"
+    password: "rootpass123"
     databases:
-      - "your_database_1"
-      - "your_database_2"
+      - "ecommerce_db"
+      - "fintech_db"
 
   postgresql:
-    host: "YOUR_HOST"
+    host: "127.0.0.1"
     port: 5432
-    user: "YOUR_USER"
-    password: "YOUR_PASSWORD"
+    user: "postgres"
+    password: "rootpass123"
     databases:
-      - "your_database_1"
-      - "your_database_2"
+      - "healthcare_db"
+      - "govservice_db"
 
 # 运行参数
 runtime:

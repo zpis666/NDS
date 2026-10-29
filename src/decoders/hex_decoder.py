@@ -47,7 +47,7 @@ class HexDecoder:
 
         try:
             decoded = HexDecoder.decode(text)
-            if decoded and all(32 <= ord(c) < 127 or c in '\n\r\t' for c in decoded):
+            if decoded and all(32 <= ord(c) < 127 or c in '\n\r\t' or '\u4e00' <= c <= '\u9fff' for c in decoded):
                 return True, decoded
             return False, text
         except Exception:

@@ -1,3 +1,4 @@
+import ast
 import json
 from typing import List
 from .base import BaseDetector
@@ -63,8 +64,12 @@ class SemiStructuredDetector(BaseDetector):
             data = json.loads(json_str)
             self._traverse_json(data, field_name, results)
         except (json.JSONDecodeError, TypeError):
-            matches = self.matcher.match_with_hints(json_str, field_name)
-            results.extend(matches)
+            try:
+                data = ast.literal_eval(json_str)
+                self._traverse_json(data, field_name, results)
+            except Exception:
+                matches = self.matcher.match_with_hints(json_str, field_name)
+                results.extend(matches)
 
         return results
 

@@ -1,11 +1,13 @@
 import sys
 from loguru import logger
-from config import get_runtime_config
+from config import BASE_DIR, get_runtime_config
 
 
 def setup_logger():
     config = get_runtime_config()
     log_level = config.get('log_level', 'INFO')
+    log_dir = BASE_DIR / "output"
+    log_dir.mkdir(parents=True, exist_ok=True)
 
     logger.remove()
 
@@ -17,7 +19,7 @@ def setup_logger():
     )
 
     logger.add(
-        "output/nds_v5.log",
+        str(log_dir / "nds_v6.log"),
         level=log_level,
         format="{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{function}:{line} - {message}",
         mode='w'
